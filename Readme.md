@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Андрей Беликин](https://up.htmlacademy.ru/javascript/21/user/872305).
-* Наставник: `Неизвестно`.
+* Наставник: `Антон`.
 
 ---
 
