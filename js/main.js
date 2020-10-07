@@ -1,3 +1,5 @@
+'use strict';
+
 const OFFERS_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 const CHECK_TIMES = [`12:00`, `13:00`, `14:00`];
 const OFFER_FEATURES = [
@@ -57,9 +59,12 @@ const createAndRenderPins = function () {
     .content.querySelector(".map__pin");
 
     for (let i = 0; i < generatedObjects.length; i++) {
-      const pinElement = PIN_TEMPLATE.cloneNode(true);
+      const PIN_ELEMENT = PIN_TEMPLATE.cloneNode(true);
+      const PIN_IMAGE = PIN_ELEMENT.querySelector("img");
       const objectItem = generatedObjects[i];
-      pinElement.style = `left: ${objectItem.}px; top: ${}`
+      pinElement.style = `left: 200 + ${objectItem.location.x}px; top: 400 + ${objectItem.location.y}px;`; // Куда здесь прибавлять\убавлять размеры картинок меток?
+      PIN_IMAGE.src = `${objectItem.author.avatar}`;
+      PIN_IMAGE.alt = `${objectItem.offer.title}`;
     }
 };
 
