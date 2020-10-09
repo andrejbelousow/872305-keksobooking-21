@@ -15,7 +15,6 @@ const OFFER_PHOTOS = [
   `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
   `http://o0.github.io/assets/images/tokyo/hotel3.jpg`,
 ];
-const MAP_WIDTH = 600;
 const generatedObjects = [];
 
 const PIN_TEMPLATE = document
@@ -23,6 +22,7 @@ const PIN_TEMPLATE = document
   .content.querySelector(`.map__pin`);
 const PIN_OFFSET_X = 50;
 const PIN_OFFSET_Y = 70;
+const MAP_WIDTH = 1200 - PIN_OFFSET_X - PIN_OFFSET_X;
 const PINS_MAP = document.querySelector(`.map__pins`);
 
 const createObjectArray = function () {
@@ -36,8 +36,8 @@ const createObjectArray = function () {
         "avatar": `img/avatars/user0${i}.png`,
       },
       "location": {
-        "x": `${getRandomValue(MAP_WIDTH)}`,
-        "y": `${getRandomValue(630, 130)}`,
+        "x": getRandomValue(MAP_WIDTH),
+        "y": getRandomValue(630 - PIN_OFFSET_Y, 130),
       },
       "offer": {
         "title": `Невероятное предложение`,
@@ -63,15 +63,13 @@ const showMap = function () {
 const createPins = function (generatedObject) {
   const PIN_ELEMENT = PIN_TEMPLATE.cloneNode(true);
   const PIN_ELEMENT_IMAGE = PIN_ELEMENT.querySelector(`img`);
+  const LEFT_COORDINATE = generatedObject.location.x + PIN_OFFSET_X;
+  const TOP_COORDINATE = generatedObject.location.y + PIN_OFFSET_Y;
   PIN_ELEMENT.style = `
-  left: ${generatedObject.location.x + PIN_OFFSET_X}px;
-  top: ${generatedObject.location.y + PIN_OFFSET_Y}px;`;
+  left: ${LEFT_COORDINATE}px;
+  top: ${TOP_COORDINATE}px;`;
   PIN_ELEMENT_IMAGE.src = `${generatedObject.author.avatar}`;
   PIN_ELEMENT_IMAGE.alt = `${generatedObject.offer.title}`;
-  console.log(
-    generatedObject.location.y + PIN_OFFSET_Y,
-    generatedObject.location.x + PIN_OFFSET_X
-  );
   return PIN_ELEMENT;
 };
 
