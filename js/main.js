@@ -61,7 +61,7 @@ const showMap = () => {
   document.querySelector(`.map`).classList.remove(`map--faded`);
 };
 
-const createPins = (generatedMock) => {
+const createPin = (generatedMock) => {
   const pinElement = pinTemplate.cloneNode(true);
   const pinElementImage = pinElement.querySelector(`img`);
   const leftCoordinate = generatedMock.location.x + PIN_OFFSET_X;
@@ -77,8 +77,7 @@ const createPins = (generatedMock) => {
 const renderPins = () => {
   const pinsFragment = document.createDocumentFragment();
   mocksArray.forEach((currentMock) => {
-    pinsFragment.appendChild(createPins(currentMock));
-    console.log(currentMock);
+    pinsFragment.appendChild(createPin(currentMock));
   });
   pinsMap.appendChild(pinsFragment);
 };
