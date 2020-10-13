@@ -15,42 +15,41 @@ const OFFER_PHOTOS = [
   `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
   `http://o0.github.io/assets/images/tokyo/hotel3.jpg`,
 ];
+const PIN_OFFSET_X = 50;
+const PIN_OFFSET_Y = 70;
+const MAP_WIDTH = 1200 - PIN_OFFSET_X - PIN_OFFSET_X;
 
 const pinTemplate = document
   .querySelector(`#pin`)
   .content.querySelector(`.map__pin`);
-const PIN_OFFSET_X = 50;
-const PIN_OFFSET_Y = 70;
-const MAP_WIDTH = 1200 - PIN_OFFSET_X - PIN_OFFSET_X;
 const pinsMap = document.querySelector(`.map__pins`);
+const getIntervalValue = (endValue, startValue = 0) => {
+  return Math.floor(Math.random() * (endValue - startValue)) + startValue;
+};
 
-const createMocksArray = function () {
-  const getRandomValue = function (maxValue, minValue = 0) {
-    return Math.floor(Math.random() * (maxValue - minValue)) + minValue;
-  };
-
+const createMocksArray = () => {
   const generatedMocks = [];
-  for (let i = 1; i <= 8; i++) {
+  for (let i = 0; i < 8; i++) {
     generatedMocks.push({
-      "author": {
-        "avatar": `img/avatars/user0${i}.png`,
+      author: {
+        avatar: `img/avatars/user0${i + 1}.png`,
       },
-      "location": {
-        "x": getRandomValue(MAP_WIDTH),
-        "y": getRandomValue(630 - PIN_OFFSET_Y, 130),
+      location: {
+        x: getIntervalValue(MAP_WIDTH),
+        y: getIntervalValue(630 - PIN_OFFSET_Y, 130),
       },
-      "offer": {
-        "title": `Невероятное предложение`,
-        "address": `600, 350`,
-        "price": 6500,
-        "type": OFFERS_TYPES[getRandomValue(OFFERS_TYPES.length)],
-        "rooms": 2,
-        "guests": 3,
-        "checkin": CHECK_TIMES[getRandomValue(CHECK_TIMES.length)],
-        "checkout": CHECK_TIMES[getRandomValue(CHECK_TIMES.length)],
-        "features": OFFER_FEATURES.slice(getRandomValue(OFFER_FEATURES.length)),
-        "description": `Аппартаменты рядом с центральной площадью, покушать можно совсем недалеко`,
-        "photos": OFFER_PHOTOS.slice(getRandomValue(OFFER_PHOTOS.length)),
+      offer: {
+        title: `Невероятное предложение`,
+        address: `600, 350`,
+        price: 6500,
+        type: OFFERS_TYPES[getIntervalValue(OFFERS_TYPES.length)],
+        rooms: getIntervalValue(4, 1),
+        guests: getIntervalValue(4, 1),
+        checkin: CHECK_TIMES[getIntervalValue(CHECK_TIMES.length)],
+        checkout: CHECK_TIMES[getIntervalValue(CHECK_TIMES.length)],
+        features: OFFER_FEATURES.slice(getIntervalValue(OFFER_FEATURES.length)),
+        description: `Аппартаменты рядом с центральной площадью, покушать можно совсем недалеко`,
+        photos: OFFER_PHOTOS.slice(getIntervalValue(OFFER_PHOTOS.length)),
       }
     });
   }
@@ -58,11 +57,11 @@ const createMocksArray = function () {
 };
 const mocksArray = createMocksArray();
 
-const showMap = function () {
+const showMap = () => {
   document.querySelector(`.map`).classList.remove(`map--faded`);
 };
 
-const createPins = function (generatedMock) {
+const createPins = (generatedMock) => {
   const pinElement = pinTemplate.cloneNode(true);
   const pinElementImage = pinElement.querySelector(`img`);
   const leftCoordinate = generatedMock.location.x + PIN_OFFSET_X;
@@ -75,12 +74,13 @@ const createPins = function (generatedMock) {
   return pinElement;
 };
 
-const renderPins = function () {
-  const pinfragment = document.createDocumentFragment();
-  for (let i = 0; i < mocksArray.length; i++) {
-    pinfragment.appendChild(createPins(mocksArray[i]));
-  }
-  pinsMap.appendChild(pinfragment);
+const renderPins = () => {
+  const pinsFragment = document.createDocumentFragment();
+  mocksArray.forEach((currentMock) => {
+    pinsFragment.appendChild(createPins(currentMock));
+    console.log(currentMock);
+  });
+  pinsMap.appendChild(pinsFragment);
 };
 
 showMap();
