@@ -130,7 +130,7 @@ mainPin.addEventListener(`mousedown`, onMainPinPress);
 mainPin.addEventListener(`keydown`, onMainPinPress);
 
 ApartmentPlaceQuantityField.addEventListener(`change`, () => {
-  if (roomQuantityField.value == 100 && ApartmentPlaceQuantityField.value === 0) {
+  if (roomQuantityField.value == 100 && ApartmentPlaceQuantityField.value == 0) {
     ApartmentPlaceQuantityField.setCustomValidity(``);
   } else if (roomQuantityField.value != ApartmentPlaceQuantityField.value) {
     ApartmentPlaceQuantityField.setCustomValidity(`Количество мест не соответствует количеству комнат!`);
