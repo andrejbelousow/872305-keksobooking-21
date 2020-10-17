@@ -17,12 +17,21 @@ const OFFER_PHOTOS = [
 ];
 const PIN_OFFSET_X = 50;
 const PIN_OFFSET_Y = 70;
+const MAIN_PIN_X_OFFSET = 31;
+let mainPinYOffset = 31;
 const MAP_WIDTH = 1200 - PIN_OFFSET_X - PIN_OFFSET_X;
 
 const pinTemplate = document
   .querySelector(`#pin`)
   .content.querySelector(`.map__pin`);
 const pinsMap = document.querySelector(`.map__pins`);
+const mainPin = document.querySelector(`.map__pin--main`);
+const advertForm = document.querySelector(`.ad-form`);
+const advertAddressField = advertForm.querySelector(`#address`);
+const advertFields = advertForm.children;
+const roomQuantityField = advertForm.querySelector(`#room_number`);
+const ApartmentPlaceQuantityField = advertForm.querySelector(`#capacity`);
+const apartmentFilters = document.querySelector(`.map__filters`).children;
 const getIntervalValue = (endValue, startValue = 0) => {
   return Math.floor(Math.random() * (endValue - startValue)) + startValue;
 };
@@ -82,9 +91,50 @@ const renderPins = () => {
   pinsMap.appendChild(pinsFragment);
 };
 
-showMap();
-renderPins();
-/* Было: открыть карту и отрисовать объявления
-   Надо: С самого начала карта и форма отключены. А после клика по стартовой метке карта и форма должны стать активными
-   Стоит перенести открытие карты и отррисовку в отдельную функцию, которая включается по клику по метке
-*/
+const fieldsStateSwitcher = function (fields) {
+  for (let field of fields) {
+    if (!field.disabled) {
+      field.disabled = `true`;
+    } else {
+      field.disabled = ``;
+    }
+  }
+};
+
+const getAddressValue = function () {
+  return `${parseInt(mainPin.style.left, 10) + MAIN_PIN_X_OFFSET}, ${parseInt(mainPin.style.top, 10) + mainPinYOffset}`;
+};
+
+const startActiveState = function () {
+  showMap();
+  renderPins();
+  advertForm.classList.remove(`ad-form--disabled`);
+  mainPinYOffset = 84;
+  fieldsStateSwitcher(apartmentFilters);
+  fieldsStateSwitcher(advertFields);
+  advertAddressField.value = getAddressValue();
+  mainPin.removeEventListener(`mousedown`, onMainPinPress);
+  mainPin.removeEventListener(`keydown`, onMainPinPress);
+};
+
+const onMainPinPress = function (evt) {
+  if (evt.button === 0 || evt.key === `Enter`) {
+    startActiveState();
+  }
+};
+advertAddressField.value = getAddressValue();
+fieldsStateSwitcher(apartmentFilters);
+fieldsStateSwitcher(advertFields);
+
+mainPin.addEventListener(`mousedown`, onMainPinPress);
+mainPin.addEventListener(`keydown`, onMainPinPress);
+
+ApartmentPlaceQuantityField.addEventListener(`change`, () => {
+  if (roomQuantityField.value == 100 && ApartmentPlaceQuantityField.value === 0) {
+    ApartmentPlaceQuantityField.setCustomValidity(``);
+  } else if (roomQuantityField.value != ApartmentPlaceQuantityField.value) {
+    ApartmentPlaceQuantityField.setCustomValidity(`Количество мест не соответствует количеству комнат!`);
+  } else {
+    ApartmentPlaceQuantityField.setCustomValidity(``);
+  }
+});
