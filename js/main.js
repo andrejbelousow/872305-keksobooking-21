@@ -17,21 +17,12 @@ const OFFER_PHOTOS = [
 ];
 const PIN_OFFSET_X = 50;
 const PIN_OFFSET_Y = 70;
-const MAIN_PIN_X_OFFSET = 31;
-let mainPinYOffset = 31;
 const MAP_WIDTH = 1200 - PIN_OFFSET_X - PIN_OFFSET_X;
 
 const pinTemplate = document
   .querySelector(`#pin`)
   .content.querySelector(`.map__pin`);
 const pinsMap = document.querySelector(`.map__pins`);
-const mainPin = document.querySelector(`.map__pin--main`);
-const advertForm = document.querySelector(`.ad-form`);
-const advertAddressField = advertForm.querySelector(`#address`);
-const advertFields = advertForm.children;
-const roomQuantityField = advertForm.querySelector(`#room_number`);
-const ApartmentPlaceQuantityField = advertForm.querySelector(`#capacity`);
-const apartmentFilters = document.querySelector(`.map__filters`).children;
 const getIntervalValue = (endValue, startValue = 0) => {
   return Math.floor(Math.random() * (endValue - startValue)) + startValue;
 };
@@ -91,50 +82,60 @@ const renderPins = () => {
   pinsMap.appendChild(pinsFragment);
 };
 
+const mainPin = document.querySelector(`.map__pin--main`);
+const apartmentFilters = document.querySelector(`.map__filters`).children;
+const advertForm = document.querySelector(`.ad-form`);
+const advertFields = advertForm.children;
+const advertAddressField = advertForm.querySelector(`#address`);
+const roomQuantityField = advertForm.querySelector(`#room_number`);
+const apartmentCapacityField = advertForm.querySelector(`#capacity`);
+
 const fieldsStateSwitcher = function (fields) {
-  for (let field of fields) {
-    if (!field.disabled) {
-      field.disabled = `true`;
-    } else {
-      field.disabled = ``;
-    }
-  }
+  Array.from(fields).forEach((field) => {
+    field.disabled = !field.disabled;
+  });
 };
 
-const getAddressValue = function () {
-  return `${parseInt(mainPin.style.left, 10) + MAIN_PIN_X_OFFSET}, ${parseInt(mainPin.style.top, 10) + mainPinYOffset}`;
+const getAddressValue = (mainPinYOffset = 31) => {
+  const MAIN_PIN_X_OFFSET = 31;
+  const x = parseInt(mainPin.style.left, 10) + MAIN_PIN_X_OFFSET;
+  const y = parseInt(mainPin.style.top, 10) + mainPinYOffset;
+  return `${x}, ${y}`;
 };
 
-const startActiveState = function () {
+const startActiveState = () => {
   showMap();
   renderPins();
   advertForm.classList.remove(`ad-form--disabled`);
-  mainPinYOffset = 84;
   fieldsStateSwitcher(apartmentFilters);
   fieldsStateSwitcher(advertFields);
-  advertAddressField.value = getAddressValue();
+  advertAddressField.value = getAddressValue(84);
   mainPin.removeEventListener(`mousedown`, onMainPinPress);
   mainPin.removeEventListener(`keydown`, onMainPinPress);
 };
 
-const onMainPinPress = function (evt) {
+const onMainPinPress = (evt) => {
   if (evt.button === 0 || evt.key === `Enter`) {
     startActiveState();
   }
 };
-advertAddressField.value = getAddressValue();
-fieldsStateSwitcher(apartmentFilters);
-fieldsStateSwitcher(advertFields);
 
+const setInitState = () => {
+  advertAddressField.value = getAddressValue();
+  fieldsStateSwitcher(apartmentFilters);
+  fieldsStateSwitcher(advertFields);
+};
+
+setInitState();
 mainPin.addEventListener(`mousedown`, onMainPinPress);
 mainPin.addEventListener(`keydown`, onMainPinPress);
 
-ApartmentPlaceQuantityField.addEventListener(`change`, () => {
-  if (roomQuantityField.value == 100 && ApartmentPlaceQuantityField.value == 0) {
-    ApartmentPlaceQuantityField.setCustomValidity(``);
-  } else if (roomQuantityField.value != ApartmentPlaceQuantityField.value) {
-    ApartmentPlaceQuantityField.setCustomValidity(`Количество мест не соответствует количеству комнат!`);
-  } else {
-    ApartmentPlaceQuantityField.setCustomValidity(``);
+apartmentCapacityField.addEventListener(`change`, () => {
+  console.log(roomQuantityField.value, apartmentCapacityField.value);
+  if (roomQuantityField.value !== `100` && apartmentCapacityField.value !== `0`) {
+    apartmentCapacityField.setCustomValidity(``);
+  } else if (roomQuantityField.value !== apartmentCapacityField.value) {
+    apartmentCapacityField.setCustomValidity(`Количество мест не соответствует количеству комнат!`);
   }
+  advertForm.reportValidity();
 });
