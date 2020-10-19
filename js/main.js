@@ -83,12 +83,13 @@ const renderPins = () => {
 };
 
 const mainPin = document.querySelector(`.map__pin--main`);
-const apartmentFilters = document.querySelector(`.map__filters`).children;
+const apartmentFiltersFields = document.querySelector(`.map__filters`).children;
 const advertForm = document.querySelector(`.ad-form`);
 const advertFields = advertForm.children;
 const advertAddressField = advertForm.querySelector(`#address`);
 const roomQuantityField = advertForm.querySelector(`#room_number`);
 const apartmentCapacityField = advertForm.querySelector(`#capacity`);
+const btn = advertForm.querySelector(`.ad-form__submit`);
 
 const fieldsStateSwitcher = function (fields) {
   Array.from(fields).forEach((field) => {
@@ -107,7 +108,7 @@ const startActiveState = () => {
   showMap();
   renderPins();
   advertForm.classList.remove(`ad-form--disabled`);
-  fieldsStateSwitcher(apartmentFilters);
+  fieldsStateSwitcher(apartmentFiltersFields);
   fieldsStateSwitcher(advertFields);
   advertAddressField.value = getAddressValue(84);
   mainPin.removeEventListener(`mousedown`, onMainPinPress);
@@ -122,7 +123,7 @@ const onMainPinPress = (evt) => {
 
 const setInitState = () => {
   advertAddressField.value = getAddressValue();
-  fieldsStateSwitcher(apartmentFilters);
+  fieldsStateSwitcher(apartmentFiltersFields);
   fieldsStateSwitcher(advertFields);
 };
 
@@ -130,12 +131,13 @@ setInitState();
 mainPin.addEventListener(`mousedown`, onMainPinPress);
 mainPin.addEventListener(`keydown`, onMainPinPress);
 
-apartmentCapacityField.addEventListener(`change`, () => {
-  console.log(roomQuantityField.value, apartmentCapacityField.value);
-  if (roomQuantityField.value !== `100` && apartmentCapacityField.value !== `0`) {
+btn.addEventListener(`click`, () => {
+  if ((apartmentCapacityField.value !== roomQuantityField.value)
+      && roomQuantityField.value !== `100`
+      && apartmentCapacityField.value !== `0`) {
+    apartmentCapacityField.setCustomValidity(`Количество мест не соответствует количеству комнат`);
+  } else {
     apartmentCapacityField.setCustomValidity(``);
-  } else if (roomQuantityField.value !== apartmentCapacityField.value) {
-    apartmentCapacityField.setCustomValidity(`Количество мест не соответствует количеству комнат!`);
   }
   advertForm.reportValidity();
 });
