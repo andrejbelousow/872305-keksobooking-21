@@ -82,5 +82,100 @@ const renderPins = () => {
   pinsMap.appendChild(pinsFragment);
 };
 
-showMap();
-renderPins();
+const mainPin = document.querySelector(`.map__pin--main`);
+const apartmentFiltersFields = document.querySelector(`.map__filters`).children;
+const advertForm = document.querySelector(`.ad-form`);
+const advertFields = advertForm.children;
+const advertAddressField = advertForm.querySelector(`#address`);
+const roomQuantityField = advertForm.querySelector(`#room_number`);
+const apartmentCapacityField = advertForm.querySelector(`#capacity`);
+const advertTitle = advertForm.querySelector(`#title`);
+const advertPrice = advertForm.querySelector(`#price`);
+const apartmentType = advertForm.querySelector(`#type`);
+const btn = advertForm.querySelector(`.ad-form__submit`);
+
+const fieldsStateSwitcher = function (fields) {
+  Array.from(fields).forEach((field) => {
+    field.disabled = !field.disabled;
+  });
+};
+
+const getAddressValue = (mainPinYOffset = 31) => {
+  const MAIN_PIN_X_OFFSET = 31;
+  const x = parseInt(mainPin.style.left, 10) + MAIN_PIN_X_OFFSET;
+  const y = parseInt(mainPin.style.top, 10) + mainPinYOffset;
+  return `${x}, ${y}`;
+};
+
+const startActiveState = () => {
+  showMap();
+  renderPins();
+  advertForm.classList.remove(`ad-form--disabled`);
+  fieldsStateSwitcher(apartmentFiltersFields);
+  fieldsStateSwitcher(advertFields);
+  advertAddressField.value = getAddressValue(84);
+  apartmentType.addEventListener(`change`, () => {
+    if (apartmentType.value === `bungalow`) {
+      advertPrice.minLength = 0;
+      advertPrice.placeholder = 0;
+    } else if (apartmentType.value === `flat`) {
+      advertPrice.minLength = 1000;
+      advertPrice.placeholder = 1000;
+    } else if (apartmentType.value === `house`) {
+      advertPrice.minLength = 5000;
+      advertPrice.placeholder = 5000;
+    } else if (apartmentType.value === `palace`) {
+      advertPrice.minLength = 10000;
+      advertPrice.placeholder = 10000;
+    }
+  });
+  mainPin.removeEventListener(`mousedown`, onMainPinPress);
+  mainPin.removeEventListener(`keydown`, onMainPinPress);
+};
+
+const onMainPinPress = (evt) => {
+  if (evt.button === 0 || evt.key === `Enter`) {
+    startActiveState();
+  }
+};
+
+const setInitState = () => {
+  advertAddressField.value = getAddressValue();
+  fieldsStateSwitcher(apartmentFiltersFields);
+  fieldsStateSwitcher(advertFields);
+};
+
+setInitState();
+mainPin.addEventListener(`mousedown`, onMainPinPress);
+mainPin.addEventListener(`keydown`, onMainPinPress);
+
+btn.addEventListener(`click`, () => {
+  if ((apartmentCapacityField.value > roomQuantityField.value)
+      && roomQuantityField.value !== `100`
+      && apartmentCapacityField.value !== `0`) {
+    apartmentCapacityField.setCustomValidity(`Количество мест не соответствует количеству комнат`);
+  } else {
+    apartmentCapacityField.setCustomValidity(``);
+  }
+
+  if (advertTitle.validity.valueMissing) {
+    advertTitle.setCustomValidity(`Название обязательно для заполнения`);
+  } else if (advertTitle.validity.tooShort) {
+    advertTitle.setCustomValidity(`Длина названия объявления - не менее 30 симв.`);
+  } else if (advertTitle.validity.tooLong) {
+    advertTitle.setCustomValidity(`Длина названия объявления - не более 100 симв.`);
+  } else {
+    advertTitle.setCustomValidity(``);
+  }
+
+  if (advertPrice.validity.valueMissing) {
+    advertPrice.setCustomValidity(`Цена обязательна для заполнения`);
+  } else if (advertPrice.value < advertPrice.minLength) {
+    advertPrice.setCustomValidity(`Цена за ночь - не менее ${advertPrice.minLength}`);
+  } else if (advertPrice.value > advertPrice.maxLength) {
+    advertPrice.setCustomValidity(`Цена за ночь - не более 1 000 000`);
+  } else {
+    advertPrice.setCustomValidity(``);
+  }
+  advertForm.reportValidity();
+});
