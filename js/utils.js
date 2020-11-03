@@ -2,9 +2,9 @@
 
 (function () {
   const mainPin = document.querySelector(`.map__pin--main`);
-  window.util = {
-    classRemover: (DOMElement, className) => {
-      DOMElement.classList.remove(className);
+  window.utils = {
+    classRemover: (domElement, className) => {
+      domElement.classList.remove(className);
     },
     fieldsStateSwitcher: (fields) => {
       Array.from(fields).forEach((field) => {
