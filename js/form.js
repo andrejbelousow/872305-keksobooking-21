@@ -65,9 +65,9 @@
     advertForm.reportValidity();
   };
   const formActivator = () => {
-    window.form.addressFieldAssigner(MAIN_PIN_Y_OFFSET);
+    addressFieldAssigner(MAIN_PIN_Y_OFFSET);
     classRemover(advertForm, `ad-form--disabled`);
-    window.form.advertFieldsStateSwitcher();
+    advertFieldsStateSwitcher();
     apartmentType.addEventListener(`change`, () => {
       apartmentMinPriceChanger();
     });

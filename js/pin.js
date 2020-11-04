@@ -21,15 +21,16 @@
     pinElementImage.alt = `${generatedMock.offer.title}`;
     return pinElement;
   };
+  const renderPins = () => {
+    const pinsFragment = document.createDocumentFragment();
+    mocksArray.forEach((currentMock) => {
+      pinsFragment.appendChild(createPin(currentMock));
+    });
+    pinsMap.appendChild(pinsFragment);
+  };
 
   window.pin = {
-    renderPins() {
-      const pinsFragment = document.createDocumentFragment();
-      mocksArray.forEach((currentMock) => {
-        pinsFragment.appendChild(createPin(currentMock));
-      });
-      pinsMap.appendChild(pinsFragment);
-    }
+    renderPins
   };
 })();
 

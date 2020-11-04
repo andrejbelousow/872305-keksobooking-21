@@ -1,10 +1,12 @@
 'use strict';
+const {addressFieldAssigner, advertFieldsStateSwitcher} = window.form;
+const {apartmentFiltersStateSwitcher, onMainPinClickHandler} = window.map;
 
 const setInitState = () => {
-  window.form.addressFieldAssigner();
-  window.map.apartmentFiltersStateSwitcher();
-  window.form.advertFieldsStateSwitcher();
+  addressFieldAssigner();
+  apartmentFiltersStateSwitcher();
+  advertFieldsStateSwitcher();
 };
 
 setInitState();
-window.map.onMainPinClickHandler();
+onMainPinClickHandler();
